@@ -1,0 +1,30 @@
+@import '../../yyvip-stylus/base'
+
+.page-modal
+  fontDpr(14)
+  color color-main
+  text-align center
+  &__main
+    z-index 9899
+    fullPageMask()
+    webkitBoxCenter()
+    &__box
+      z-index 9900
+      position relative
+
+.page-modal--default
+  .page-modal
+    &__main
+      &__box
+        width 560spx
+        background #fff
+        border-radius 12spx
+        &__close
+          padding 20spx
+          absolutePos(0, 0, null, null)
+          &__icon
+            bgImg('../../yyvip-img/close.png', 19spx, 19spx)
+        &__body
+          padding 40spx 30spx
+        &__foot
+          fontDpr(16)

@@ -1,0 +1,16 @@
+@import '../../yyvip-stylus/base'
+
+.bottom-select
+  max-height 500spx
+  
+.bottom-select--default
+  .bottom-select
+    &__cancel
+      preHeight(90spx)
+      color color-grey
+    &__box
+      &__item
+        preHeight(90spx)
+        border-bottom 1PX solid border-grey
+        &.active
+          color color-blue

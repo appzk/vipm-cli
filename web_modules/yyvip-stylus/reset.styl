@@ -1,0 +1,204 @@
+@import './base.styl'
+
+font-family = 'Microsoft YaHei', Arial, Helvetica, sans-serif
+
+*
+  margin 0
+  padding 0
+  word-wrap break-word
+  word-break break-all
+
+html
+  overflow-y auto
+  user-select none
+  text-size-adjust 100%
+  text-rendering optimizelegibility
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+
+body
+  font-size 12px
+  text-align left
+  user-select none
+  color color-main
+  font-family font-family
+  text-size-adjust 100% !important
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6
+  color color-main
+  font-weight normal
+
+h1
+  fontDpr(36)
+
+h2
+  fontDpr(30)
+
+h3
+  fontDpr(24)
+
+h4
+  fontDpr(18)
+
+h5
+  fontDpr(14)
+
+h6
+  fontDpr(12)
+
+nav,
+main,
+aside,
+figure,
+footer,
+header,
+article,
+section
+  display block
+
+audio,
+video,
+canvas
+  display inline-block
+  *display inline
+  *zoom 1
+
+audio:not([controls])
+  height 0
+  display none
+
+[hidden]
+  display none
+
+svg:not(:root)
+  overflow hidden
+
+img
+  border 0
+
+legend
+  border 0
+  padding 0
+
+a
+  outline none
+  appearance none
+  text-decoration none
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+  &:link,
+  &:visited,
+  &:hover,
+  &:active
+    outline none
+    appearance none
+    text-decoration none
+    -ms-tap-highlight-color transparent
+    -moz-tap-highlight-color transparent
+    -webkit-tap-highlight-color transparent
+
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+menu
+  list-style none inside none
+
+i,
+em
+  appearance none
+  font-style normal
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+
+iframe
+  display block
+
+table
+  border-spacing 0
+  border-collapse collapse
+
+th
+  text-align inherit
+
+input,
+button,
+select,
+textarea
+  fontDpr(12)
+  outline none
+  appearance none
+  font-family font-family
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+  &:focus
+    outline none
+    appearance none
+    text-decoration none
+    -ms-tap-highlight-color transparent
+    -moz-tap-highlight-color transparent
+    -webkit-tap-highlight-color transparent
+
+textarea
+  overflow auto
+  vertical-align top
+
+button,
+input[type="reset"],
+input[type="submit"],
+input[type="button"]
+  cursor pointer
+  appearance button
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+
+input[type="radio"],
+input[type="checkbox"]
+  padding 0
+  box-sizing border-box
+
+input[disabled],
+button[disabled]
+  cursor default
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  margin 0
+  appearance none
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button
+  appearance none
+  -ms-tap-highlight-color transparent
+  -moz-tap-highlight-color transparent
+  -webkit-tap-highlight-color transparent
+
+input::-webkit-input-placeholder
+  color color-grey
+
+.block-bg
+  margin 0
+  width 100%
+  display block
+
+#__vconsole .vc-switch
+  right 20spx !important
+  bottom 20spx !important
+  font-size 28spx !important
+  padding 16spx 32spx !important
+  border-radius 8spx !important

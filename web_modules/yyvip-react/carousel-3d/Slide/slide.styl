@@ -1,0 +1,17 @@
+@import '../../../yyvip-stylus/base'
+
+.carousel-3d-slide
+  margin 0
+  opacity 0
+  text-align left
+  overflow hidden
+  visibility hidden
+  box-sizing border-box
+  background-color border-grey
+  absolutePos(0, null, null, null)
+  border 1PX solid rgba(0, 0, 0, 0.4)
+  &.current
+    z-index 999
+    opacity 1 !important
+    transform none !important
+    visibility visible !important

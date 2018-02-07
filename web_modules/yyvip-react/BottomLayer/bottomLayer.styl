@@ -1,0 +1,16 @@
+@import '../../yyvip-stylus/base'
+
+.bottom-layer
+  fontDpr(14)
+  z-index 9799
+  fullPageMask()
+  color color-main
+  text-align center
+  &__box
+    z-index 9800
+    bottomPageLayer()
+
+.bottom-layer--default
+  .bottom-layer
+    &__box
+      background #fff

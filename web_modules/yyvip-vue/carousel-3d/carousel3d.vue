@@ -1,0 +1,336 @@
+<template lang="pug">
+.carousel-3d-container(:style="{height: `${this.slideHeight}px`}")
+  .carousel-3d-slider(:style="{width: `${this.slideWidth}px`, height: `${this.slideHeight}px`}")
+    slot
+</template>
+
+<script>
+import slide from './slide.vue'
+import autoplay from './mixins/autoplay'
+import { calCircleSub } from '../../yyvip-utils/utils'
+import { getRem, getDpr } from '../../yyvip-flexible/utils'
+
+const noop = () => {}
+
+export default {
+  name: 'carousel3d',
+  components: {
+    slide
+  },
+  props: {
+    perspective: {
+      type: [Number, String],
+      default: 35
+    },
+    display: {
+      type: [Number, String],
+      default: 5
+    },
+    loop: {
+      type: Boolean,
+      default: true
+    },
+    animationSpeed: {
+      type: [Number, String],
+      default: 500
+    },
+    dir: {
+      type: String,
+      default: 'rtl'
+    },
+    width: {
+      type: [Number, String],
+      default: getRem() * 4.8
+    },
+    height: {
+      type: [Number, String],
+      default: getRem() * 3.6
+    },
+    border: {
+      type: [Number, String],
+      default: 1
+    },
+    space: {
+      type: [Number, String],
+      default: 'auto'
+    },
+    startIndex: {
+      type: [Number, String],
+      default: 0
+    },
+    clickable: {
+      type: Boolean,
+      default: true
+    },
+    minSwipeDistance: {
+      type: Number,
+      default: getDpr() * 10
+    },
+    inverseScaling: {
+      type: [Number, String],
+      default: getRem() * 4
+    },
+    onClickCurrent: {
+      type: Function,
+      default: noop
+    }
+  },
+  data() {
+    return {
+      viewport: 0,
+      currentIndex: 0,
+      total: 0,
+      lock: false,
+      dragOffset: 0,
+      dragStartX: 0,
+      mousedown: false,
+      zIndex: 998
+    }
+  },
+  mixins: [
+    autoplay
+  ],
+  computed: {
+    isLastSlide() {
+      return this.currentIndex === this.total - 1
+    },
+    isFirstSlide() {
+      return this.currentIndex === 0
+    },
+    isNextPossible() {
+      return !(!this.loop && this.isLastSlide)
+    },
+    isPrevPossible() {
+      return !(!this.loop && this.isFirstSlide)
+    },
+    slideWidth() {
+      const vw = this.viewport
+      const sw = parseInt(this.width) + (parseInt(this.border, 10) * 2)
+      return vw < sw ? vw : sw
+    },
+    slideHeight() {
+      const sw = parseInt(this.width, 10) + (parseInt(this.border, 10) * 2)
+      const sh = parseInt(parseInt(this.height) + (this.border * 2), 10)
+      const ar = this.calculateAspectRatio(sw, sh)
+      return this.slideWidth / ar
+    },
+    visible() {
+      const v = (this.display > this.total) ? this.total : this.display
+      return v !== 2 ? (v % 2) ? v : v - 1 : v
+    },
+    hasHiddenSlides() {
+      return this.total > this.visible
+    },
+    leftIndices() {
+      const n = Math.floor(this.visible / 2) + 1
+      const indices = []
+      for (let m = 1; m < n; m++) {
+        indices.push((this.dir === 'ltr') ? (this.currentIndex + m) % (this.total) : (this.currentIndex - m) % (this.total))
+      }
+      return indices
+    },
+    rightIndices() {
+      const n = Math.floor(this.visible / 2) + 1
+      const indices = []
+      for (let m = 1; m < n; m++) {
+        indices.push((this.dir === 'ltr') ? (this.currentIndex - m) % (this.total) : (this.currentIndex + m) % (this.total))
+      }
+      return indices
+    },
+    leftOutIndex() {
+      const n = Math.floor(this.visible / 2) + 1
+      if (this.dir === 'ltr') {
+        return ((this.total - this.currentIndex - n) <= 0) ? (-parseInt(this.total - this.currentIndex - n)) : (this.currentIndex + n)
+      }
+      return (this.currentIndex - n)
+    },
+    rightOutIndex() {
+      const n = Math.floor(this.visible / 2) + 1
+      if (this.dir === 'ltr') {
+        return (this.currentIndex - n)
+      }
+      return ((this.total - this.currentIndex - n) <= 0) ? (-parseInt(this.total - this.currentIndex - n, 10)) : (this.currentIndex + n)
+    }
+  },
+  methods: {
+    /**
+     * Go to next slide
+     */
+    goNext() {
+      if (this.isNextPossible) {
+        this.isLastSlide ? this.goSlide(0) : this.goSlide(this.currentIndex + 1)
+      }
+    },
+    /**
+     * Go to previous slide
+     */
+    goPrev() {
+      if (this.isPrevPossible) {
+        this.isFirstSlide ? this.goSlide(this.total - 1) : this.goSlide(this.currentIndex - 1)
+      }
+    },
+    /**
+     * Go to slide
+     * @param  {String} index of slide where to go
+     */
+    goSlide(index) {
+      this.currentIndex = (index < 0 || index > this.total - 1) ? 0 : index
+      this.lock = true
+      if (this.isLastSlide) this.$emit('last-slide', this.currentIndex)
+      this.$emit('before-slide-change', this.currentIndex)
+      setTimeout(() => this.animationEnd(), this.animationSpeed)
+    },
+    /**
+     * Go to slide far slide
+     */
+    goFar(index) {
+      if (index === this.currentIndex) return this.onClickCurrent(index)
+      let i = 0
+      let timeBuff = 0
+      const diff = calCircleSub(index, this.currentIndex, this.total)
+      const diff2 = (diff < 0) ? -diff : diff
+      while (i < diff2) {
+        i += 1
+        const timeout = (diff2 === 1) ? 0 : (timeBuff)
+        setTimeout(() => (diff < 0) ? this.goPrev(diff2) : this.goNext(diff2), timeout)
+        timeBuff += (this.animationSpeed / (diff2))
+      }
+    },
+    /**
+     * Trigger actions when animation ends
+     */
+    animationEnd() {
+      this.lock = false
+      this.$emit('after-slide-change', this.currentIndex)
+    },
+    /**
+     * Trigger actions when mouse is released
+     * @param  {Object} e The event object
+     */
+    handleMouseup() {
+      this.mousedown = false
+      this.dragOffset = 0
+    },
+    /**
+     * Trigger actions when mouse is pressed
+     * @param  {Object} e The event object
+     */
+    handleMousedown(e) {
+      if (!e.touches) e.preventDefault()
+      this.mousedown = true
+      this.dragStartX = ('ontouchstart' in window) ? e.touches[0].clientX : e.clientX
+    },
+    /**
+     * Trigger actions when mouse is pressed and then moved (mouse drag)
+     * @param  {Object} e The event object
+     */
+    handleMousemove(e) {
+      if (!this.mousedown) return
+      const eventPosX = ('ontouchstart' in window) ? e.touches[0].clientX : e.clientX
+      const deltaX = (this.dragStartX - eventPosX)
+      this.dragOffset = deltaX
+      if (this.dragOffset > this.minSwipeDistance) {
+        this.handleMouseup()
+        this.goNext()
+      } else if (this.dragOffset < -this.minSwipeDistance) {
+        this.handleMouseup()
+        this.goPrev()
+      }
+    },
+    /**
+     * A mutation observer is used to detect changes to the containing node
+     * in order to keep the magnet container in sync with the height its reference node.
+     */
+    attachMutationObserver() {
+      const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+      if (MutationObserver) {
+        const config = {
+          attributes: true,
+          childList: true,
+          characterData: true
+        }
+        this.mutationObserver = new MutationObserver(() => {
+          this.$nextTick(() => this.computeData())
+        })
+        if (this.$el) this.mutationObserver.observe(this.$el, config)
+      }
+    },
+    /**
+     * Stop listening to mutation changes
+     */
+    detachMutationObserver() {
+      if (this.mutationObserver) this.mutationObserver.disconnect()
+    },
+    /**
+     * Get the number of slides
+     * @return {Number} Number of slides
+     */
+    getSlideCount() {
+      if (this.$slots.default !== undefined) return this.$slots.default.filter((value) => value.tag !== void 0).length
+      return 0
+    },
+    /**
+     * Calculate slide with and keep defined aspect ratio
+     * @return {Number} Aspect ratio number
+     */
+    calculateAspectRatio(width, height) {
+      return Math.min(width / height)
+    },
+    /**
+     * Re-compute the number of slides and current slide
+     */
+    computeData() {
+      this.total = this.getSlideCount()
+      this.currentIndex = parseInt(this.startIndex) > this.total - 1 ? this.total - 1 : parseInt(this.startIndex)
+      this.viewport = this.$el.clientWidth
+    },
+    setSize() {
+      this.$el.style.cssText += `height: ${this.slideHeight}px;`
+      this.$el.childNodes[0].style.cssText += `width: ${this.slideWidth}px; height: ${this.slideHeight}px;`
+    }
+  },
+  mounted() {
+    this.computeData()
+    this.attachMutationObserver()
+    if (!this.$isServer) {
+      window.addEventListener('resize', this.setSize)
+      if ('ontouchstart' in window) {
+        this.$el.addEventListener('touchstart', this.handleMousedown)
+        this.$el.addEventListener('touchend', this.handleMouseup)
+        this.$el.addEventListener('touchmove', this.handleMousemove)
+      } else {
+        this.$el.addEventListener('mousedown', this.handleMousedown)
+        this.$el.addEventListener('mouseup', this.handleMouseup)
+        this.$el.addEventListener('mousemove', this.handleMousemove)
+      }
+    }
+  },
+  beforeDestroy() {
+    if (!this.$isServer) {
+      this.detachMutationObserver()
+      if ('ontouchstart' in window) {
+        this.$el.removeEventListener('touchmove', this.handleMousemove)
+      } else {
+        this.$el.removeEventListener('mousemove', this.handleMousemove)
+      }
+      window.removeEventListener('resize', this.setSize)
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.carousel-3d-container
+  z-index 0
+  width 100%
+  min-height 1spx
+  overflow hidden
+  position relative
+  box-sizing border-box
+
+.carousel-3d-slider
+  margin 0 auto
+  position relative
+  transform-style preserve-3d
+  perspective 1000spx
+</style>

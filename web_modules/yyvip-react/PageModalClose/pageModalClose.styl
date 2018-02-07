@@ -1,0 +1,29 @@
+@import '../../yyvip-stylus/base'
+
+.page-modal-close
+  fontDpr(14)
+  color color-main
+  text-align center
+  &__main
+    z-index 9899
+    fullPageMask()
+    webkitBoxVCenter()
+    &__box
+      z-index 9900
+    &__close-btn
+      color #fff
+      fontDpr(20)
+      width 80spx
+      preHeight(80spx)
+      margin-top 60spx
+      text-align center
+      border-radius 50%
+      border 3PX solid #fff
+
+.page-modal-close--default
+  .page-modal-close
+    &__main
+      &__box
+        width 560spx
+        background #fff
+        border-radius 24spx

@@ -1,0 +1,24 @@
+@import '~yyvip-stylus/base'
+
+.touch-slider
+  height 100%
+  overflow hidden
+  position relative
+  &__wrap
+    width 100%
+    height 100%
+    display flex
+    transition transform 0.3s ease-in-out
+  &__indicators
+    width 100%
+    webkitBoxCenter()
+    absolutePos(null, null, 20spx, null)
+    &__item
+      width 16spx
+      height 16spx
+      margin 0 6spx
+      border-radius 50%
+      border 1PX solid #fff
+      background-color rgba(0, 0, 0, 0.2)
+      &.active
+        background-color #fff
