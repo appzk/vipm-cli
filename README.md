@@ -1,7 +1,18 @@
 vipm-cli
 ==========================
 
-A simple CLI.
+- 一次安装
+- 无繁琐的webpack配置，项目内无需install
+- 支持zepto vue react
+- 多种模板支持 pug art-template
+- 多种css预处理支持 sass less stylus
+- jsx jsx-vue支持
+- 区分三个环境，开发，测试和正式
+- 支持Mock，可Mock请求，包括fetch
+- 支持js编译输出拆分
+- 支持单页SPA和多页应用
+- 支持dev-server作为简单的服务器，并且可以区分出环境
+- 内置组件库，工具库（可根据需要引入）
 
 ## Install
 
