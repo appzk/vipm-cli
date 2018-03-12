@@ -19,7 +19,7 @@
     "workflow"
   ],
   "author": "vip feteam",
-  "license": "ISC",
+  "license": "MIT",
   "bin": {
     "vipm": "./bin/cli.js"
   },
