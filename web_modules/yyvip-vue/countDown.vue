@@ -80,12 +80,13 @@ export default {
   },
   computed: {
     showText() {
-      return this.disabled ? `${this.disabledText}(${this.maxTime - this.time}S)` : this.activeText
+      return this.disabled ? (this.disabledText ? `${this.disabledText}(${this.maxTime - this.time}S)` : `${this.maxTime - this.time}S`) : this.activeText
     },
     classObj() {
       return assign({
         active: !this.disabled,
-        disabled: this.disabled
+        disabled: this.disabled,
+        unclickable: !this.clickable
       }, this.styleClass)
     }
   }

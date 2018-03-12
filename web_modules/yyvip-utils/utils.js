@@ -110,7 +110,7 @@ export const checkFunction = resolveFunction(0)
 
 export function getContentFromError(error) {
   if (typeof error === 'object') {
-    return error.message || error.msg || error.statusMsg || error.statusText || error.desc
+    return error.message || error.msg || error.statusMsg || error.statusText || error.desc || '服务器加载失败'
   }
   return error
 }

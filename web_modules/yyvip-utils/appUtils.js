@@ -1,8 +1,8 @@
 import jsonp from './jsonp'
 import assign from 'lodash/assign'
 import { stringify } from 'querystring'
-import { type, randomString, asyncLoadScript } from './utils'
 import { aori, isQQ, isQZ, isWeixin, getIosVersion } from './checkBrowser'
+import { type, randomString, asyncLoadScript, replaceFunctionFromObject } from './utils'
 
 import '../yyvip-stylus/openInBrowserTip.styl'
 
@@ -103,6 +103,15 @@ export const openApp = (opts) => {
 
 export const downloadApp = (opts) => {
   const { iosDownload, androidDownload, onDownload, onNoDownload } = opts
+  if (opts.onWeixin) {
+    replaceFunctionFromObject(opts, 'onWeixin', fn => () => {
+      if (aori === 'ios' && iosDownload) {
+        window.location.href = iosDownload
+      } else {
+        fn()
+      }
+    })
+  }
   adaptedApp(opts, function() {
     const download = aori === 'ios' ? iosDownload : androidDownload
     if (download) {

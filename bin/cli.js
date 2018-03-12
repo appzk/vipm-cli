@@ -5,7 +5,8 @@ const program = require('commander'),
   cmdDev = require('../lib/command/dev'),
   cmdInit = require('../lib/command/init'),
   cmdBuild = require('../lib/command/build'),
-  cmdPrompt = require('../lib/command/prompt')
+  cmdPrompt = require('../lib/command/prompt'),
+  cmdPush = require('../lib/command/push')
 
 program
   .version(require('../package').version)
@@ -28,6 +29,13 @@ program
 program
   .command('ddll').action((cmd) => {
     action(cmdDll, cmd, 'test', ['test', 'prod'], 'dev')
+  })
+program
+  .command('push')
+  .alias('p')
+  .option('-m <msg>')
+  .action((cmd) => {
+    cmdPush(cmd.M)
   })
 
 function assert(condition, msg) {

@@ -1,5 +1,5 @@
 <template lang="pug">
-bottomLayer(:show="show", :hideBottomLayer="hideBottomLayer", :bottomLayerClass="bottomLayerClass", :onClickMask="onClickMask", :hideOnClickMask="hideOnClickMask")
+bottom-layer(:show="show", :hideBottomLayer="hideBottomLayer", :bottomLayerClass="bottomLayerClass", :onClickMask="onClickMask", :hideOnClickMask="hideOnClickMask")
   .b__bottom-select(v-bind:class="bottomSelectClass")
     slot
     ul.__box

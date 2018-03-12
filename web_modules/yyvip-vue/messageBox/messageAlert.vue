@@ -1,7 +1,7 @@
 <template lang="pug">
 page-alert(:showPageModal="showPageModal", :onClickMask="onClickMask", :hideOnClickMask="hideOnClickMask", :hidePageModal="hidePageModal", :pageModalClass="pageModalClass", :showClose="showClose", :onClickClose="onClickClose", :hideOnClickClose="hideOnClickClose", :alertButtonText="alertButtonText", :onConfirm="onConfirm", :hideOnConfirm="hideOnConfirm")
   p.message-alert-title {{title}}
-  p.message-alert-message(v-if="message") {{message}}
+  p.message-alert-message(v-if="message", v-html="message")
 </template>
 
 <script>
