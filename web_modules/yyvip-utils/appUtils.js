@@ -52,7 +52,7 @@ export const openInBrowserTip = new OpenInBrowserTip()
 
 function adaptedApp(opts, cb) {
   const { universalUrl, yingyongbaoUrl } = opts
-  if (aori === 'ios' && getIosVersion() >= 9 && universalUrl) {
+  if (aori === 'ios' && getIosVersion() >= 9 && universalUrl && !isWeixin) {
     window.location.href = universalUrl
   } else if (isQQ || isWeixin) {
     if (yingyongbaoUrl) {

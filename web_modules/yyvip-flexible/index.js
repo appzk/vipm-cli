@@ -5,6 +5,7 @@ let dpr = getDpr(0)
 let scale = getScale(0)
 let metaElement = document.querySelector('meta[name="viewport"]')
 
+const epsilon = 0.2
 const documentElement = document.documentElement
 
 if (!dpr && !scale) {
@@ -32,7 +33,14 @@ if (!metaElement) {
 }
 
 function refreshRem() {
-  documentElement.style.fontSize = getRem() + 'px'
+  const rem = getRem()
+  documentElement.style.fontSize = `${rem}px`
+
+  // 修复曲面屏手机
+  const computedRem = parseFloat(window.getComputedStyle(documentElement).fontSize)
+  if (Math.abs(computedRem - rem) > epsilon) {
+    documentElement.style.fontSize = `${rem * rem / computedRem}px`
+  }
 }
 
 window.addEventListener('resize', function() {
