@@ -37,6 +37,7 @@ export function parseDataUrlWithCanvas(dataUrl, opts = {}) {
       width = 600,
       height = 600,
       imgQuality = 1,
+      contain = true,
       imgType = ''
     } = opts
     const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0]
@@ -59,20 +60,30 @@ export function parseDataUrlWithCanvas(dataUrl, opts = {}) {
         ih /= 2
       }
 
+      let moveX = 0
+      let moveY = 0
       let translateX = 0
       let translateY = 0
-      let scaleWidth = width
-      let scaleHeight = height
+      let scaleWidth = iw
+      let scaleHeight = ih
+      let containWidth = width
+      let containHeight = height
 
-      if (iw > ih) {
-        scaleWidth = (iw / ih) * width
-        translateX = (iw - ih) / 2
+      if (iw / ih > width / height) {
+        scaleWidth = (width / height) * ih
+        translateX = (iw - scaleWidth) / 2
+        containHeight = (ih / iw) * width
+        moveY = (height - containHeight) / 2
       } else {
-        scaleHeight = (ih / iw) * height
-        translateY = (ih - iw) / 2
+        scaleHeight = (height / width) * iw
+        translateY = (ih - scaleHeight) / 2
+        containWidth = (iw / ih) * height
+        moveX = (width - containWidth) / 2
       }
       if (crop) {
-        drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), translateX, translateY, iw, ih, 0, 0, scaleWidth, scaleHeight)
+        drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), translateX, translateY, scaleWidth, scaleHeight, 0, 0, width, height)
+      } else if (contain) {
+        drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), 0, 0, iw, ih, moveX, moveY, containWidth, containHeight)
       } else {
         drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), 0, 0, iw, ih, 0, 0, width, height)
       }
