@@ -42,17 +42,25 @@ export function parseDataUrlWithCanvas(dataUrl, opts = {}) {
     } = opts
     const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0]
     const exif = EXIF.readFromBinaryFile(parseDataUrlToBuffer(dataUrl).buffer)
+    const iosTransformCoordinate = [5, 6, 7, 8].indexOf(exif.Orientation || 1) >= 0
     const img = new Image()
     img.onload = function() {
+      let newWidth = width
+      let newHeight = height
       let iw = img.width
       let ih = img.height
 
       const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
+      if (iosTransformCoordinate) {
+        newWidth = height
+        newHeight = width
+      }
+      canvas.width = newWidth
+      canvas.height = newHeight
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.save()
+
       transformCoordinate(canvas, width, height, exif.Orientation || 1)
 
       if (detectSubsampling(img)) {
@@ -69,17 +77,26 @@ export function parseDataUrlWithCanvas(dataUrl, opts = {}) {
       let containWidth = width
       let containHeight = height
 
-      if (iw / ih > width / height) {
-        scaleWidth = (width / height) * ih
+      if (iw / ih > newWidth / newHeight) {
+        scaleWidth = (newWidth / newHeight) * ih
         translateX = (iw - scaleWidth) / 2
-        containHeight = (ih / iw) * width
+        if (iosTransformCoordinate) {
+          containHeight = (ih / iw) * (height / width) * height
+        } else {
+          containHeight = (ih / iw) * width
+        }
         moveY = (height - containHeight) / 2
       } else {
-        scaleHeight = (height / width) * iw
+        scaleHeight = (newHeight / newWidth) * iw
         translateY = (ih - scaleHeight) / 2
-        containWidth = (iw / ih) * height
+        if (iosTransformCoordinate) {
+          containWidth = (iw / ih) * (width / height) * width
+        } else {
+          containWidth = (iw / ih) * height
+        }
         moveX = (width - containWidth) / 2
       }
+
       if (crop) {
         drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), translateX, translateY, scaleWidth, scaleHeight, 0, 0, width, height)
       } else if (contain) {
@@ -88,6 +105,7 @@ export function parseDataUrlWithCanvas(dataUrl, opts = {}) {
         drawImageIOSFix(ctx, img, detectVerticalSquash(img, iw, ih), 0, 0, iw, ih, 0, 0, width, height)
       }
       ctx.restore()
+
       return resolve(canvas.toDataURL(imgType || mimeString, imgQuality))
     }
     img.onerror = function() {
